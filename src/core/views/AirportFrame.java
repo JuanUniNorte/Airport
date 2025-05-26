@@ -813,7 +813,9 @@ public class AirportFrame extends javax.swing.JFrame {
         lbl_ID_Update_.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         lbl_ID_Update_.setText("ID:");
 
+        txt_ID_Update_.setEditable(false);
         txt_ID_Update_.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        txt_ID_Update_.setEnabled(false);
 
         lbl_First_Name_Update_.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
         lbl_First_Name_Update_.setText("First Name:");
@@ -1748,26 +1750,43 @@ public class AirportFrame extends javax.swing.JFrame {
     
     private void btn_Add_Passenger_Flight_ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Add_Passenger_Flight_ActionPerformed
         // TODO add your handling code here:
-        long passengerId = Long.parseLong(txt_ID_Add_to_Flight_.getText());
-        String flightId = cmb_Flight_Add_to_Flight_.getItemAt(cmb_Flight_Add_to_Flight_.getSelectedIndex());
+        try {
+        long passengerId = Long.parseLong(txt_ID_Add_to_Flight_.getText().trim());
+        String flightId = cmb_Flight_Add_to_Flight_.getItemAt(cmb_Flight_Add_to_Flight_.getSelectedIndex()).toString();
 
-        Passenger passenger = null;
-        Flight flight = null;
+        VueloController vueloController = new VueloController(
+            new ServicioVuelos(BaseDatosSimulada.getInstance()),
+            new ServicioAviones(BaseDatosSimulada.getInstance()),
+            new ServicioAeropuertos(BaseDatosSimulada.getInstance()),
+            new ServicioPasajeros(BaseDatosSimulada.getInstance())
+        );
 
-        for (Passenger p : this.passengers) {
-            if (p.getId() == passengerId) {
-                passenger = p;
-            }
+        Response<String> response = vueloController.añadirPasajero(flightId, passengerId);
+
+        if (response.getCodigo() == 200) {
+            JOptionPane.showMessageDialog(this, 
+                "Pasajero añadido al vuelo exitosamente", 
+                "Éxito", 
+                JOptionPane.INFORMATION_MESSAGE);
+
+            txt_ID_Add_to_Flight_.setText("");
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                response.getMensaje(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
-
-        for (Flight f : this.flights) {
-            if (flightId.equals(f.getId())) {
-                flight = f;
-            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+                "El ID del pasajero debe ser un número válido", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Error inesperado: " + e.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
-
-        passenger.addFlight(flight);
-        flight.addPassenger(passenger);
     }//GEN-LAST:event_btn_Add_Passenger_Flight_ActionPerformed
 
     private void btn_Delay_Flight_ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Delay_Flight_ActionPerformed
