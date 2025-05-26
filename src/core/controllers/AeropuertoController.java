@@ -17,9 +17,17 @@ import java.util.stream.Collectors;
  */
 public class AeropuertoController {
     private final ServicioAeropuertos servicio;
+    private static AeropuertoController instancia;
 
-    public AeropuertoController(ServicioAeropuertos servicio) {
+    private AeropuertoController(ServicioAeropuertos servicio) {
         this.servicio = servicio;
+    }
+
+    public static AeropuertoController getInstance(ServicioAeropuertos servicio) {
+        if (instancia == null) {
+            instancia = new AeropuertoController(servicio);
+        }
+        return instancia;
     }
 
     public Response<Ubicacion> crearAeropuerto(Ubicacion ubicacion) {

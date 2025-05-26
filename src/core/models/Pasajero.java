@@ -81,7 +81,22 @@ public class Pasajero implements Cloneable{
         return clon;
     }
 
+    public int getEdad() {
+        return Period.between(this.fechaNacimiento, LocalDate.now()).getYears();
+    }
 
+    public String getTelefonoFormateado() {
+        return String.format("+%d %d", this.codigoPaisTelefono, this.telefono);
+    }
+
+    public String getNombreCompleto() {
+        return String.format("%s %s", this.nombre, this.apellido);
+    }
+
+    public int getCantidadVuelos() {
+        return this.vuelos.size();
+    }
+    
     public static Pasajero desdeJSON(JSONObject json, ServicioVuelos servicioVuelos) {
         long id = json.getLong("id");
         String nombre = json.getString("nombre");

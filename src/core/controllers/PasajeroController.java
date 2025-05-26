@@ -22,8 +22,7 @@ public class PasajeroController {
     public PasajeroController(ServicioPasajeros servicio) {
         this.servicio = servicio;
     }
-    
-    // Método estático para obtener la instancia (Singleton)
+
     public static PasajeroController getInstance(ServicioPasajeros servicio) {
         if (instancia == null) {
             instancia = new PasajeroController(servicio);
@@ -67,7 +66,9 @@ public class PasajeroController {
         if (p.getNombre() == null || p.getNombre().trim().isEmpty()) return false;
         if (p.getCodigoPaisTelefono() < 0 || String.valueOf(p.getCodigoPaisTelefono()).length() > 3) return false;
         if (p.getTelefono() < 0 || String.valueOf(p.getTelefono()).length() > 11) return false;
-        if (p.getFechaNacimiento() == null || p.getFechaNacimiento().isAfter(LocalDate.now())) return false;
+        if (p.getFechaNacimiento().getMonthValue() < 1 || p.getFechaNacimiento().getMonthValue() > 12) {
+        return false;
+    }   
         return true;
     }
 }

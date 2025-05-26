@@ -17,22 +17,30 @@ import java.util.stream.Collectors;
  */
 public class AvionController {
     private final ServicioAviones servicio;
+    private static AvionController instancia;
 
-    public AvionController(ServicioAviones servicio) {
+    private AvionController(ServicioAviones servicio) {
         this.servicio = servicio;
     }
 
-    public Response<Avion> crearAvion(Avion avion) {
+    public static AvionController getInstance(ServicioAviones servicio) {
+        if (instancia == null) {
+            instancia = new AvionController(servicio);
+        }
+        return instancia;
+    }
+
+    public Response<Avion> registrarAvion(Avion avion) {
         if (!validarAvion(avion)) {
             return new Response<>(400, "Datos inválidos", null);
         }
         if (servicio.existeAvion(avion.getId())) {
             return new Response<>(409, "ID de avión ya existe", null);
         }
-
+        
         Avion copia = avion.clone();
         servicio.registrarAvion(copia);
-        return new Response<>(201, "Avión creado", copia);
+        return new Response<>(201, "Avión registrado", copia);
     }
 
     public Response<ArrayList<Avion>> obtenerAvionesOrdenados() {

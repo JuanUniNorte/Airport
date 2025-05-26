@@ -26,7 +26,17 @@ public class BaseDatosSimulada {
     private Map<String, Avion> aviones = new HashMap<>();
     private Map<Long, Pasajero> pasajeros = new HashMap<>();
     private Map<String, Vuelo> vuelos = new HashMap<>();
+    private static BaseDatosSimulada instancia;
+    
+    public BaseDatosSimulada() {} 
 
+    public static BaseDatosSimulada getInstance() {
+        if (instancia == null) {
+            instancia = new BaseDatosSimulada();
+        }
+        return instancia;
+    }
+    
     public void cargarDatosDesdeJSON(String rutaArchivo) throws Exception {
         String contenido = new String(Files.readAllBytes(Paths.get(rutaArchivo)));
         JSONObject json = new JSONObject(contenido);

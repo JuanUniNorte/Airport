@@ -23,6 +23,10 @@ public class ServicioPasajeros {
         this.baseDatos = baseDatos;
     }
 
+    public ServicioPasajeros() {
+        this.baseDatos = BaseDatosSimulada.getInstance();
+    }
+
     public void registrarPasajero(Pasajero pasajero) {
         if (pasajero == null || baseDatos.getMapaPasajeros().containsKey(pasajero.getId())) {
             throw new IllegalArgumentException("Pasajero inválido o ya registrado");
