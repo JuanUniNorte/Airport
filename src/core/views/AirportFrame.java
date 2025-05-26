@@ -1847,10 +1847,42 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void btn_Refresh_All_Flights_List_ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Refresh_All_Flights_List_ActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) tbl_Lista_Vuelos_Show_all_Flights_.getModel();
+        /*DefaultTableModel model = (DefaultTableModel) tbl_Lista_Vuelos_Show_all_Flights_.getModel();
         model.setRowCount(0);
         for (Flight flight : this.flights) {
             model.addRow(new Object[]{flight.getId(), flight.getDepartureLocation().getAirportId(), flight.getArrivalLocation().getAirportId(), (flight.getScaleLocation() == null ? "-" : flight.getScaleLocation().getAirportId()), flight.getDepartureDate(), flight.calculateArrivalDate(), flight.getPlane().getId(), flight.getNumPassengers()});
+        }*/
+        try {
+        VueloController controller = new VueloController(
+            new ServicioVuelos(BaseDatosSimulada.getInstance()),
+            new ServicioAviones(BaseDatosSimulada.getInstance()),
+            new ServicioAeropuertos(BaseDatosSimulada.getInstance()),
+            new ServicioPasajeros(BaseDatosSimulada.getInstance())
+        );
+        
+        Response<ArrayList<Vuelo>> response = controller.obtenerVuelosOrdenados();
+        
+        if (response.getCodigo() == 200) {
+            DefaultTableModel model = (DefaultTableModel) tbl_Lista_Vuelos_Show_all_Flights_.getModel();
+            model.setRowCount(0);
+            
+            for (Vuelo vuelo : response.getDatos()) {
+                model.addRow(new Object[]{
+                    vuelo.getId(),
+                    vuelo.getUbicacionSalida().getIdAeropuerto(),
+                    vuelo.getUbicacionLlegada().getIdAeropuerto(),
+                    vuelo.getUbicacionEscala() != null ? vuelo.getUbicacionEscala().getIdAeropuerto() : "-",
+                    vuelo.getFechaSalida(),
+                    vuelo.calcularFechaLlegada(),
+                    vuelo.getAvion().getId(),
+                    vuelo.getPasajeros().size()
+                });
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, response.getMensaje(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar vuelos", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btn_Refresh_All_Flights_List_ActionPerformed
 
